@@ -14,6 +14,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const puppeteer_1 = __importDefault(require("puppeteer"));
 const express_1 = __importDefault(require("express"));
+const cors_1 = __importDefault(require("cors"));
 const getData = () => __awaiter(void 0, void 0, void 0, function* () {
     const browser = yield puppeteer_1.default.launch();
     const page = yield browser.newPage();
@@ -34,6 +35,7 @@ const getData = () => __awaiter(void 0, void 0, void 0, function* () {
     return data;
 });
 const app = express_1.default();
+app.use(cors_1.default());
 app.get('/data', (_req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const data = yield getData();
     res.send(data);

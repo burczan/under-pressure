@@ -1,5 +1,6 @@
 import puppeteer from 'puppeteer';
 import express from 'express';
+import cors from 'cors';
 
 const getData = async () => {
   const browser = await puppeteer.launch();
@@ -27,6 +28,7 @@ const getData = async () => {
 };
 
 const app = express();
+app.use(cors());
 
 app.get('/data', async (_req, res) => {
   const data = await getData();
