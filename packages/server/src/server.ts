@@ -97,7 +97,7 @@ const getWeatherHistory = async () => {
 const app = express();
 app.use(cors());
 
-app.get('/data', async (_req, res) => {
+app.get('/weather_history', async (_req, res) => {
   const data = await getWeatherHistory();
   res.send(data);
 })

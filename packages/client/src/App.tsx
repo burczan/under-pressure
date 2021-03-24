@@ -20,14 +20,15 @@ type WeatherHistory = {
 };
 
 export const App = () => {
-  const { data, error, loading } = useDataFetching<WeatherHistory>('http://localhost:4000/data');
+  const url = 'http://localhost:4000/weather_history';
+  const { data, error, loading } = useDataFetching<WeatherHistory>(url);
 
   return (
     <>
       <div className="block">
         <Hero
           title="Under Pressure"
-          subtitle={`Pressure values from last 4 hours for ${data?.location.name} station`}
+          subtitle={`Pressure values from last 4 hours`}
         />
       </div>
       <div className="columns is-centered">
