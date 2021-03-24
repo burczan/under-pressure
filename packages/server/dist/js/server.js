@@ -21,17 +21,21 @@ const getWeatherHistory = () => __awaiter(void 0, void 0, void 0, function* () {
     const chmi = 'https://www.chmi.cz/aktualni-situace/aktualni-stav-pocasi/ceska-republika/stanice/profesionalni-stanice/prehled-stanic/liberec?l=cz';
     yield page.goto(chmi);
     const data = yield page.evaluate(() => {
-        var _a, _b, _c, _d, _e, _f, _g, _h, _j;
+        var _a, _b, _c;
+        const loadedContent = document.querySelector('#loadedcontent');
+        const getNthTable = (n) => loadedContent === null || loadedContent === void 0 ? void 0 : loadedContent.querySelector(`table:nth-child(${n})`);
+        const getNthTableTextContent = (n) => { var _a, _b; return (_b = (_a = getNthTable(n)) === null || _a === void 0 ? void 0 : _a.firstElementChild) === null || _b === void 0 ? void 0 : _b.textContent; };
         let date;
         let latitude;
         let longitud;
         let altitude;
         const pressure = [];
         let hour;
-        const locationName = (_c = (_b = (_a = document.querySelector('#loadedcontent > table:nth-child(3)')) === null || _a === void 0 ? void 0 : _a.firstElementChild) === null || _b === void 0 ? void 0 : _b.textContent) === null || _c === void 0 ? void 0 : _c.trim();
-        const measurementDate = (_e = (_d = document.querySelector('#loadedcontent > table:nth-child(4)')) === null || _d === void 0 ? void 0 : _d.firstElementChild) === null || _e === void 0 ? void 0 : _e.textContent;
-        const measurementLocationDetails = (_g = (_f = document.querySelector('#loadedcontent > table:nth-child(5)')) === null || _f === void 0 ? void 0 : _f.firstElementChild) === null || _g === void 0 ? void 0 : _g.textContent;
-        const weatherTable = document.querySelector('#loadedcontent > table:nth-child(8)');
+        const weatherTable = getNthTable(8);
+        const weatherRows = Array.from((_a = weatherTable === null || weatherTable === void 0 ? void 0 : weatherTable.firstElementChild) === null || _a === void 0 ? void 0 : _a.children);
+        const locationName = (_b = getNthTableTextContent(3)) === null || _b === void 0 ? void 0 : _b.trim();
+        const measurementDate = getNthTableTextContent(4);
+        const measurementLocationDetails = getNthTableTextContent(5);
         if (measurementDate) {
             const [day, month, year, time, ..._rest] = measurementDate.trim().split(' ');
             const [h, _min] = time.split(':');
@@ -44,10 +48,9 @@ const getWeatherHistory = () => __awaiter(void 0, void 0, void 0, function* () {
             longitud = lon.split(' ')[0].replace('°', '');
             altitude = alt;
         }
-        const rows = Array.from((_h = weatherTable === null || weatherTable === void 0 ? void 0 : weatherTable.firstElementChild) === null || _h === void 0 ? void 0 : _h.children);
-        const pressureRow = (_j = rows
+        const pressureRow = (_c = weatherRows
             .map((row) => row.innerText.trim().split('\t'))
-            .find(row => row[0] === 'Tlak vzduchu na stanici')) === null || _j === void 0 ? void 0 : _j.slice(1).filter(cell => cell !== '');
+            .find(row => row[0] === 'Tlak vzduchu na stanici')) === null || _c === void 0 ? void 0 : _c.slice(1).filter(cell => cell !== '');
         if (pressureRow) {
             pressureRow.map((cell, i) => {
                 const [value, unit] = cell.split(' ');

@@ -25,6 +25,10 @@ const getWeatherHistory = async () => {
   await page.goto(chmi);
 
   const data: WeatherHistoryType = await page.evaluate(() => {
+    const loadedContent = document.querySelector('#loadedcontent');
+    const getNthTable = (n: number) => loadedContent?.querySelector(`table:nth-child(${n})`);
+    const getNthTableTextContent = (n: number) => getNthTable(n)?.firstElementChild?.textContent;
+
     let date: WeatherHistoryType['date'];
     let latitude: WeatherHistoryType['location']['latitude'];
     let longitud: WeatherHistoryType['location']['longitud'];
@@ -32,14 +36,11 @@ const getWeatherHistory = async () => {
     const pressure: WeatherHistoryType['pressure'] = [];
     let hour: WeatherHistoryType['pressure'][number]['hour'];
 
-    const locationName = document.querySelector('#loadedcontent > table:nth-child(3)')
-      ?.firstElementChild?.textContent?.trim() as WeatherHistoryType['location']['name'];
-    const measurementDate = document.querySelector('#loadedcontent > table:nth-child(4)')
-      ?.firstElementChild?.textContent as WeatherHistoryType['date'];
-    const measurementLocationDetails = document.querySelector('#loadedcontent > table:nth-child(5)')
-      ?.firstElementChild?.textContent;
-    const weatherTable = document.querySelector('#loadedcontent > table:nth-child(8)');
-
+    const weatherTable = getNthTable(8);
+    const weatherRows = Array.from(weatherTable?.firstElementChild?.children as HTMLCollection)
+    const locationName = getNthTableTextContent(3)?.trim() as WeatherHistoryType['location']['name'];
+    const measurementDate = getNthTableTextContent(4);
+    const measurementLocationDetails = getNthTableTextContent(5);
 
     if (measurementDate) {
       const [day, month, year, time, ..._rest] = measurementDate.trim().split(' ');
@@ -49,7 +50,7 @@ const getWeatherHistory = async () => {
         Number(year),
         Number(month.replace('.', '')) - 1,
         Number(day.replace('.', ''))
-      ).toDateString() as string
+      ).toDateString();
     }
 
     if (measurementLocationDetails) {
@@ -59,9 +60,7 @@ const getWeatherHistory = async () => {
       altitude = alt;
     }
 
-    const rows = Array.from(weatherTable?.firstElementChild?.children as HTMLCollection)
-
-    const pressureRow: string[] | undefined = rows
+    const pressureRow: string[] | undefined = weatherRows
       .map((row) => (row as HTMLElement).innerText.trim().split('\t'))
       .find(row => row[0] === 'Tlak vzduchu na stanici')
       ?.slice(1)
