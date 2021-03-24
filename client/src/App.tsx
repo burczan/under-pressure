@@ -5,8 +5,13 @@ import { LoadingSpinner } from './components/LoadingSpinner';
 import { useDataFetching } from './hooks';
 
 type Result = {
-  location: string | undefined;
   date: string | undefined,
+  location: {
+    name: string | undefined;
+    latitude: string | undefined;
+    longitud: string | undefined;
+    altitude: string | undefined;
+  };
   values: {
     hour: string;
     pressure: number;
@@ -22,13 +27,16 @@ export const App = () => {
       <div className="block">
         <Hero
           title="Under Pressure"
-          subtitle="Pressure values from last 4 hours for Liberec station"
+          subtitle={`Pressure values from last 4 hours for ${data?.location.name} station`}
         />
       </div>
       <div className="columns is-centered">
         <div className="column is-half">
           <Message
-            header="Station Liberec"
+            header={loading
+              ? 'Loading data for station...'
+              : `${data?.date}, ${data?.location.name} (${data?.location.altitude})`
+            }
             color={error ? 'is-warning' : undefined}
             messageClassName="is-size-5"
           >

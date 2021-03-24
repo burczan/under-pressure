@@ -3,8 +3,13 @@ import express from 'express';
 import cors from 'cors';
 
 type Result = {
-  location: string | undefined;
   date: string | undefined,
+  location: {
+    name: string | undefined;
+    latitude: string | undefined;
+    longitud: string | undefined;
+    altitude: string | undefined;
+  };
   values: {
     hour: string;
     pressure: number;
@@ -12,7 +17,7 @@ type Result = {
   }[]
 };
 
-type PressureHistory = Result | undefined;
+type PressureHistory = Result;
 
 const getPressureHistory = async () => {
   const browser = await puppeteer.launch();
@@ -22,17 +27,18 @@ const getPressureHistory = async () => {
   await page.goto(chmi);
 
   const data: PressureHistory = await page.evaluate(() => {
-    let location: Result['location'];
     let date: Result['date'];
+    let latitude: Result['location']['latitude'];
+    let longitud: Result['location']['longitud'];
+    let altitude: Result['location']['altitude'];
+    const values: Result['values'] = [];
     let hour: Result['values'][number]['hour'];
 
-    const measurementLocation = document.querySelector('#loadedcontent > table:nth-child(3)')?.firstElementChild?.textContent as Result['location'];
+    const locationName = document.querySelector('#loadedcontent > table:nth-child(3)')?.firstElementChild?.textContent?.trim() as Result['location']['name'];
     const measurementDate = document.querySelector('#loadedcontent > table:nth-child(4)')?.firstElementChild?.textContent as Result['date'];
+    const measurementLocationDetails = document.querySelector('#loadedcontent > table:nth-child(5)')?.firstElementChild?.textContent;
     const weatherTable = document.querySelector('#loadedcontent > table:nth-child(8)');
 
-    if (measurementLocation) {
-      location = measurementLocation.trim();
-    }
 
     if (measurementDate) {
       const [day, month, year, time, ..._rest] = measurementDate.trim().split(' ');
@@ -45,6 +51,13 @@ const getPressureHistory = async () => {
       ).toDateString() as string
     }
 
+    if (measurementLocationDetails) {
+      const [lat, lon, alt] = measurementLocationDetails.trim().split('     ');
+      latitude = lat.split(' ')[0].replace('°', '');
+      longitud = lon.split(' ')[0].replace('°', '');
+      altitude = alt;
+    }
+
     const rows = Array.from(weatherTable?.firstElementChild?.children as HTMLCollection)
 
     const pressureRow: string[] | undefined = rows
@@ -54,8 +67,6 @@ const getPressureHistory = async () => {
       .filter(cell => cell !== '');
     
     if (pressureRow) {
-      const values: Result['values'] = [];
-
       pressureRow.map((cell, i) => {
         const [pressure, unit] = cell.split(' ');
 
@@ -65,15 +76,18 @@ const getPressureHistory = async () => {
           pressureUnit: unit,
         })
       })
-
-      return {
-        location,
-        date,
-        values,
-      };
     }
 
-    return undefined;
+    return {
+      location: {
+        name: locationName,
+        latitude,
+        longitud,
+        altitude,
+      },
+      date,
+      values,
+    };
   });
   
   await browser.close();
