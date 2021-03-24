@@ -2,7 +2,17 @@ import puppeteer from 'puppeteer';
 import express from 'express';
 import cors from 'cors';
 
-type PressureHistory = number[] | undefined;
+type Result = {
+  location: string | undefined;
+  date: string | undefined,
+  values: {
+    hour: string;
+    pressure: number;
+    pressureUnit: string;
+  }[]
+};
+
+type PressureHistory = Result | undefined;
 
 const getPressureHistory = async () => {
   const browser = await puppeteer.launch();
@@ -12,25 +22,55 @@ const getPressureHistory = async () => {
   await page.goto(chmi);
 
   const data: PressureHistory = await page.evaluate(() => {
-    const pressureTable = document.querySelector('#loadedcontent > table:nth-child(8)');
-    const rows = Array.from(pressureTable
-      ?.firstElementChild
-      ?.children as HTMLCollection)
+    let location: Result['location'];
+    let date: Result['date'];
+    let hour: Result['values'][number]['hour'];
+
+    const measurementLocation = document.querySelector('#loadedcontent > table:nth-child(3)')?.firstElementChild?.textContent as Result['location'];
+    const measurementDate = document.querySelector('#loadedcontent > table:nth-child(4)')?.firstElementChild?.textContent as Result['date'];
+    const weatherTable = document.querySelector('#loadedcontent > table:nth-child(8)');
+
+    if (measurementLocation) {
+      location = measurementLocation.trim();
+    }
+
+    if (measurementDate) {
+      const [day, month, year, time, ..._rest] = measurementDate.trim().split(' ');
+      const [h, _min] = time.split(':');
+      hour = h;
+      date = new Date(
+        Number(year),
+        Number(month.replace('.', '')) - 1,
+        Number(day.replace('.', ''))
+      ).toDateString() as string
+    }
+
+    const rows = Array.from(weatherTable?.firstElementChild?.children as HTMLCollection)
 
     const pressureRow: string[] | undefined = rows
       .map((row) => (row as HTMLElement).innerText.trim().split('\t'))
-      .find(row => row[0] === 'Tlak vzduchu na stanici');
+      .find(row => row[0] === 'Tlak vzduchu na stanici')
+      ?.slice(1)
+      .filter(cell => cell !== '');
     
     if (pressureRow) {
-      const result = pressureRow.filter(el => el !== '');
-      const [_title, ...stringValues] = result;
-      const numberValues = stringValues
-        .map(value => value.split(' '))
-        .map(value => {
-          const [val, _unit] = value;
-          return Number.parseFloat(val.replace(',', '.'));
-        });
-      return [...numberValues];
+      const values: Result['values'] = [];
+
+      pressureRow.map((cell, i) => {
+        const [pressure, unit] = cell.split(' ');
+
+        values.push({
+          hour: `${Number(hour) - i}:00`,
+          pressure: Number.parseFloat(pressure.replace(',', '.')),
+          pressureUnit: unit,
+        })
+      })
+
+      return {
+        location,
+        date,
+        values,
+      };
     }
 
     return undefined;

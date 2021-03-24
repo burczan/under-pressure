@@ -4,8 +4,18 @@ import { Message } from './components/Message';
 import { LoadingSpinner } from './components/LoadingSpinner';
 import { useDataFetching } from './hooks';
 
+type Result = {
+  location: string | undefined;
+  date: string | undefined,
+  values: {
+    hour: string;
+    pressure: number;
+    pressureUnit: string;
+  }[]
+};
+
 export const App = () => {
-  const { data, error, loading } = useDataFetching<number[]>('http://localhost:4000/data');
+  const { data, error, loading } = useDataFetching<Result>('http://localhost:4000/data');
 
   return (
     <>
@@ -28,7 +38,13 @@ export const App = () => {
               </div>
             )}
             {error && <p>Could not fetch data.</p>}
-            {(!loading && !error && data) && data.map((value) => <p key={value}>{value}</p>)}
+            {(!loading && !error && data) && data.values.map(({ hour, pressure, pressureUnit }) => {
+              return (
+                <p key={hour}>
+                  {`${hour}: ${pressure} ${pressureUnit}`}
+                </p>
+              )
+            })}
           </Message>
         </div>
       </div>
