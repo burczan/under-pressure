@@ -12,10 +12,10 @@ type Result = {
     longitud: string | undefined;
     altitude: string | undefined;
   };
-  values: {
+  pressure: {
     hour: string;
-    pressure: number;
-    pressureUnit: string;
+    value: number;
+    unit: string;
   }[]
 };
 
@@ -46,10 +46,10 @@ export const App = () => {
               </div>
             )}
             {error && <p>Could not fetch data.</p>}
-            {(!loading && !error && data) && data.values.map(({ hour, pressure, pressureUnit }) => {
+            {(!loading && !error && data) && data.pressure.map(({ hour, value, unit }) => {
               return (
                 <p key={hour}>
-                  {`${hour}: ${pressure} ${pressureUnit}`}
+                  {`${hour}: ${value} ${unit}`}
                 </p>
               )
             })}

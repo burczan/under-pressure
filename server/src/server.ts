@@ -10,16 +10,16 @@ type Result = {
     longitud: string | undefined;
     altitude: string | undefined;
   };
-  values: {
+  pressure: {
     hour: string;
-    pressure: number;
-    pressureUnit: string;
+    value: number;
+    unit: string;
   }[]
 };
 
 type PressureHistory = Result;
 
-const getPressureHistory = async () => {
+const getWeatherHistory = async () => {
   const browser = await puppeteer.launch();
   const page = await browser.newPage();
 
@@ -31,8 +31,8 @@ const getPressureHistory = async () => {
     let latitude: Result['location']['latitude'];
     let longitud: Result['location']['longitud'];
     let altitude: Result['location']['altitude'];
-    const values: Result['values'] = [];
-    let hour: Result['values'][number]['hour'];
+    const pressure: Result['pressure'] = [];
+    let hour: Result['pressure'][number]['hour'];
 
     const locationName = document.querySelector('#loadedcontent > table:nth-child(3)')?.firstElementChild?.textContent?.trim() as Result['location']['name'];
     const measurementDate = document.querySelector('#loadedcontent > table:nth-child(4)')?.firstElementChild?.textContent as Result['date'];
@@ -68,12 +68,12 @@ const getPressureHistory = async () => {
     
     if (pressureRow) {
       pressureRow.map((cell, i) => {
-        const [pressure, unit] = cell.split(' ');
+        const [value, unit] = cell.split(' ');
 
-        values.push({
+        pressure.push({
           hour: `${Number(hour) - i}:00`,
-          pressure: Number.parseFloat(pressure.replace(',', '.')),
-          pressureUnit: unit,
+          value: Number.parseFloat(value.replace(',', '.')),
+          unit,
         })
       })
     }
@@ -86,7 +86,7 @@ const getPressureHistory = async () => {
         altitude,
       },
       date,
-      values,
+      pressure,
     };
   });
   
@@ -98,7 +98,7 @@ const app = express();
 app.use(cors());
 
 app.get('/data', async (_req, res) => {
-  const data = await getPressureHistory();
+  const data = await getWeatherHistory();
   res.send(data);
 })
 
