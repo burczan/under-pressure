@@ -11,7 +11,7 @@ Display pressure values from last 4 hours for Liberec station (source: [Český 
 $ npm run start
 ```
 
-- Server: http://localhost:4000/data
+- Server: http://localhost:4000/weather_history
 - Client: http://localhost:3000/
 
 ### Run server only
