@@ -4,7 +4,7 @@ import { Message } from './components/Message';
 import { LoadingSpinner } from './components/LoadingSpinner';
 import { useDataFetching } from './hooks';
 
-type Result = {
+type WeatherHistory = {
   date: string | undefined,
   location: {
     name: string | undefined;
@@ -20,7 +20,7 @@ type Result = {
 };
 
 export const App = () => {
-  const { data, error, loading } = useDataFetching<Result>('http://localhost:4000/data');
+  const { data, error, loading } = useDataFetching<WeatherHistory>('http://localhost:4000/data');
 
   return (
     <>
