@@ -2,7 +2,7 @@ import puppeteer from 'puppeteer';
 import express from 'express';
 import cors from 'cors';
 
-type WeatherHistory = {
+type WeatherHistoryType = {
   date: string | undefined,
   location: {
     name: string | undefined;
@@ -24,17 +24,20 @@ const getWeatherHistory = async () => {
   const chmi = 'https://www.chmi.cz/aktualni-situace/aktualni-stav-pocasi/ceska-republika/stanice/profesionalni-stanice/prehled-stanic/liberec?l=cz';
   await page.goto(chmi);
 
-  const data: WeatherHistory = await page.evaluate(() => {
-    let date: WeatherHistory['date'];
-    let latitude: WeatherHistory['location']['latitude'];
-    let longitud: WeatherHistory['location']['longitud'];
-    let altitude: WeatherHistory['location']['altitude'];
-    const pressure: WeatherHistory['pressure'] = [];
-    let hour: WeatherHistory['pressure'][number]['hour'];
+  const data: WeatherHistoryType = await page.evaluate(() => {
+    let date: WeatherHistoryType['date'];
+    let latitude: WeatherHistoryType['location']['latitude'];
+    let longitud: WeatherHistoryType['location']['longitud'];
+    let altitude: WeatherHistoryType['location']['altitude'];
+    const pressure: WeatherHistoryType['pressure'] = [];
+    let hour: WeatherHistoryType['pressure'][number]['hour'];
 
-    const locationName = document.querySelector('#loadedcontent > table:nth-child(3)')?.firstElementChild?.textContent?.trim() as WeatherHistory['location']['name'];
-    const measurementDate = document.querySelector('#loadedcontent > table:nth-child(4)')?.firstElementChild?.textContent as WeatherHistory['date'];
-    const measurementLocationDetails = document.querySelector('#loadedcontent > table:nth-child(5)')?.firstElementChild?.textContent;
+    const locationName = document.querySelector('#loadedcontent > table:nth-child(3)')
+      ?.firstElementChild?.textContent?.trim() as WeatherHistoryType['location']['name'];
+    const measurementDate = document.querySelector('#loadedcontent > table:nth-child(4)')
+      ?.firstElementChild?.textContent as WeatherHistoryType['date'];
+    const measurementLocationDetails = document.querySelector('#loadedcontent > table:nth-child(5)')
+      ?.firstElementChild?.textContent;
     const weatherTable = document.querySelector('#loadedcontent > table:nth-child(8)');
 
 

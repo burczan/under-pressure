@@ -3,34 +3,34 @@
 Display pressure values from last 4 hours for Liberec station (source: [Český hydrometeorologický ústav](https://www.chmi.cz/)).
 
 ## Setup
-### Run server
+
+### Run both server and client
 
 ```sh
-cd server/
+# from root folder
+$ npm run start
 ```
 
-Before first use:
+- Server: http://localhost:4000/data
+- Client: http://localhost:3000/
+
+### Run server only
 
 ```sh
-npm run build
+$ cd server/
+
+# Before first use run:
+$ npm run build
+
+$ npm run start
 ```
 
-Start development server:
+### Run client only
+
 ```sh
-npm run start
+$ cd client/
+$ npm run start
 ```
-
-Server is available at http://localhost:4000/data.
-
-### Run client
-
-Start client:
-```sh
-cd client/
-npm run start
-```
-
-Client is available at http://localhost:3000/
 
 ## Technologies used
 
@@ -38,3 +38,4 @@ Client is available at http://localhost:3000/
 - [express](https://expressjs.com/)
 - [puppeteer](https://developers.google.com/web/tools/puppeteer)
 - [bulma](https://bulma.io/)
+- [lerna](https://lerna.js.org/)
