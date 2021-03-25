@@ -24,7 +24,7 @@ export const App = () => {
               <LoadingSpinner />
             </div>
           )}
-          {error && <ErrorMessage message="Could not fetch data."/>}
+          {error && <ErrorMessage>Could not fetch data.</ErrorMessage>}
           {(!loading && !error && data) && <PressureDetails details={data} />}
         </div>
       </div>

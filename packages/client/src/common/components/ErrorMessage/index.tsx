@@ -1,15 +1,14 @@
 import React from 'react';
-import cx from 'classnames';
-import s from './style.module.css';
+import { Notification } from '../Notification';
 
 type ErrorMessageProps = {
-  message: string;
+  children: React.ReactNode;
 };
 
-export const ErrorMessage = ({ message }: ErrorMessageProps) => {
+export const ErrorMessage = ({ children }: ErrorMessageProps) => {
   return (
-    <div className={cx('notification is-warning', s.center, s.width)}>
-      {message}
-    </div>
+    <Notification color="is-warning">
+      {children}
+    </Notification>
   );
 };
