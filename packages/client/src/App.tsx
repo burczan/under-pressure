@@ -1,60 +1,31 @@
 import React from 'react';
+import { PressureDetails, WeatherHistory } from './components/PressureDetails';
 import { Hero } from './common/components/Hero';
-import { Message } from './common/components/Message';
+import { ErrorMessage } from './common/components/ErrorMessage';
 import { LoadingSpinner } from './common/components/LoadingSpinner';
 import { useDataFetching } from './common/hooks';
 
-type WeatherHistory = {
-  date: string | undefined,
-  location: {
-    name: string | undefined;
-    latitude: string | undefined;
-    longitud: string | undefined;
-    altitude: string | undefined;
-  };
-  pressure: {
-    hour: string;
-    value: number;
-    unit: string;
-  }[]
-};
-
 export const App = () => {
   const url = 'http://localhost:4000/weather_history';
-  const { data, error, loading } = useDataFetching<WeatherHistory>(url);
+  const { data, loading, error } = useDataFetching<WeatherHistory>(url);
 
   return (
     <>
       <div className="block">
         <Hero
           title="Under Pressure"
-          subtitle={`Pressure values from last 4 hours`}
+          subtitle="Pressure values from last 4 hours"
         />
       </div>
       <div className="columns is-centered">
         <div className="column is-half">
-          <Message
-            header={loading
-              ? 'Loading data for station...'
-              : `${data?.date}, ${data?.location.name} (${data?.location.altitude})`
-            }
-            color={error ? 'is-warning' : undefined}
-            messageClassName="is-size-5"
-          >
-            {loading && (
-              <div className="block has-text-centered">
-                <LoadingSpinner />
-              </div>
-            )}
-            {error && <p>Could not fetch data.</p>}
-            {(!loading && !error && data) && data.pressure.map(({ hour, value, unit }) => {
-              return (
-                <p key={hour}>
-                  {`${hour}: ${value} ${unit}`}
-                </p>
-              )
-            })}
-          </Message>
+          {loading && (
+            <div className="block has-text-centered">
+              <LoadingSpinner />
+            </div>
+          )}
+          {error && <ErrorMessage message="Could not fetch data."/>}
+          {(!loading && !error && data) && <PressureDetails details={data} />}
         </div>
       </div>
     </>
