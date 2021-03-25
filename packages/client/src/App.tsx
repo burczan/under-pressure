@@ -1,8 +1,8 @@
 import React from 'react';
-import { Hero } from './components/Hero';
-import { Message } from './components/Message';
-import { LoadingSpinner } from './components/LoadingSpinner';
-import { useDataFetching } from './hooks';
+import { Hero } from './common/components/Hero';
+import { Message } from './common/components/Message';
+import { LoadingSpinner } from './common/components/LoadingSpinner';
+import { useDataFetching } from './common/hooks';
 
 type WeatherHistory = {
   date: string | undefined,
