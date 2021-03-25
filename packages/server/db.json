@@ -1,0 +1,33 @@
+{
+  "weather_history": {
+    "location": {
+      "name": "Liberec",
+      "latitude": "50,7697",
+      "longitud": "15,0238",
+      "altitude": "397,72 m n. m."
+    },
+    "date": "Thu Mar 25 2021",
+    "pressure": [
+      {
+        "hour": "8:00",
+        "value": 973.3,
+        "unit": "hPa"
+      },
+      {
+        "hour": "7:00",
+        "value": 973,
+        "unit": "hPa"
+      },
+      {
+        "hour": "6:00",
+        "value": 972.9,
+        "unit": "hPa"
+      },
+      {
+        "hour": "5:00",
+        "value": 972.8,
+        "unit": "hPa"
+      }
+    ]
+  }
+}
