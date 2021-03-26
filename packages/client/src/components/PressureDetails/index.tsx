@@ -17,7 +17,6 @@ export type WeatherHistory = {
   }[]
 };
 
-
 type PressureDetailsProps = {
   details: WeatherHistory;
 };
@@ -32,14 +31,14 @@ export const PressureDetails = ({ details }: PressureDetailsProps) => {
       header={`${details.date}, ${details.location.name} (${details.location.altitude})`}
       messageClassName="is-size-5"
     >
-      <PressureChange value={pressureChangeIn4Hours}/>
+      <PressureChange value={pressureChangeIn4Hours} />
       {details.pressure.map(({ hour, value, unit }) => {
         return (
           <p key={hour}>
             {`${hour}: ${value} ${unit}`}
           </p>
-        )
+        );
       })}
     </Message>
   );
-}
+};

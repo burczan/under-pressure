@@ -29,8 +29,7 @@ export const useDataFetching = <ResponseType>(
     };
 
     fetchData();
-  }, [options, url])
-
+  }, [options, url]);
 
   return {
     data,
