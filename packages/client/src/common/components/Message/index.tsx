@@ -9,7 +9,12 @@ type MessageProps = {
   messageClassName?: string;
 };
 
-export const Message = ({ children, header, color, messageClassName }: MessageProps) => {
+export const Message = ({
+  children,
+  header,
+  color,
+  messageClassName,
+}: MessageProps) => {
   return (
     <article className={cx('message', color, messageClassName)}>
       {header && (

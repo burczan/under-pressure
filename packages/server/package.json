@@ -6,7 +6,8 @@
   "scripts": {
     "build": "tsc",
     "start": "concurrently \"tsc -w\" \"nodemon dist/js/server.js\"",
-    "mock-server": "json-server -p 4000 -w db.json"
+    "mock-server": "json-server -p 4000 -w db.json",
+    "eslint": "node_modules/eslint/bin/eslint.js --ext .ts src"
   },
   "keywords": [],
   "author": "",
@@ -22,7 +23,12 @@
     "@types/cors": "^2.8.10",
     "@types/express": "^4.17.11",
     "@types/node": "^14.14.35",
+    "@typescript-eslint/eslint-plugin": "^4.19.0",
+    "@typescript-eslint/parser": "^4.19.0",
     "concurrently": "^6.0.0",
+    "eslint": "^7.22.0",
+    "eslint-config-airbnb-typescript": "^12.3.1",
+    "eslint-plugin-import": "^2.22.1",
     "nodemon": "^2.0.7"
   }
 }

@@ -13,4 +13,4 @@ export const PressureChange = ({ value }: PressureChangeProps) => {
       </div>
     </Notification>
   );
-}
+};

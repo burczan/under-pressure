@@ -19,6 +19,7 @@ export const getWeatherHistory = async () => {
   const browser = await puppeteer.launch();
   const page = await browser.newPage();
 
+  // eslint-disable-next-line max-len
   const chmi = 'https://www.chmi.cz/aktualni-situace/aktualni-stav-pocasi/ceska-republika/stanice/profesionalni-stanice/prehled-stanic/liberec?l=cz';
   await page.goto(chmi);
 
@@ -35,7 +36,8 @@ export const getWeatherHistory = async () => {
     let hour: WeatherHistoryType['pressure'][number]['hour'];
 
     const weatherTable = getNthTable(8);
-    const weatherRows = Array.from(weatherTable?.firstElementChild?.children as HTMLCollection)
+    const weatherRows = Array.from(weatherTable?.firstElementChild?.children as HTMLCollection);
+    // eslint-disable-next-line max-len
     const locationName = getNthTableTextContent(3)?.trim() as WeatherHistoryType['location']['name'];
     const measurementDate = getNthTableTextContent(4);
     const measurementLocationDetails = getNthTableTextContent(5);
@@ -47,7 +49,7 @@ export const getWeatherHistory = async () => {
       date = new Date(
         Number(year),
         Number(month.replace('.', '')) - 1,
-        Number(day.replace('.', ''))
+        Number(day.replace('.', '')),
       ).toDateString();
     }
 
@@ -60,10 +62,10 @@ export const getWeatherHistory = async () => {
 
     const pressureRow: string[] | undefined = weatherRows
       .map((row) => (row as HTMLElement).innerText.trim().split('\t'))
-      .find(row => row[0] === 'Tlak vzduchu na stanici')
+      .find((row) => row[0] === 'Tlak vzduchu na stanici')
       ?.slice(1)
-      .filter(cell => cell !== '');
-    
+      .filter((cell) => cell !== '');
+
     if (pressureRow) {
       pressureRow.map((cell, i) => {
         const [value, unit] = cell.split(' ');
@@ -72,8 +74,8 @@ export const getWeatherHistory = async () => {
           hour: `${Number(hour) - i}:00`,
           value: Number.parseFloat(value.replace(',', '.')),
           unit,
-        })
-      })
+        });
+      });
     }
 
     return {
@@ -87,7 +89,7 @@ export const getWeatherHistory = async () => {
       pressure,
     };
   });
-  
+
   await browser.close();
   return data;
 };
