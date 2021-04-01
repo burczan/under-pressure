@@ -1,21 +1,8 @@
 import puppeteer from 'puppeteer';
+import { Request, Response, NextFunction } from 'express';
+import { WeatherHistory } from '../models/weatherHistory';
 
-type WeatherHistoryType = {
-  date: string | undefined,
-  location: {
-    name: string | undefined;
-    latitude: string | undefined;
-    longitud: string | undefined;
-    altitude: string | undefined;
-  };
-  pressure: {
-    hour: string;
-    value: number;
-    unit: string;
-  }[]
-};
-
-export const getWeatherHistory = async () => {
+const fetchWeatherHistory = async () => {
   const browser = await puppeteer.launch();
   const page = await browser.newPage();
 
@@ -23,22 +10,21 @@ export const getWeatherHistory = async () => {
   const chmi = 'https://www.chmi.cz/aktualni-situace/aktualni-stav-pocasi/ceska-republika/stanice/profesionalni-stanice/prehled-stanic/liberec?l=cz';
   await page.goto(chmi);
 
-  const data: WeatherHistoryType = await page.evaluate(() => {
+  const data: WeatherHistory = await page.evaluate(() => {
     const loadedContent = document.querySelector('#loadedcontent');
     const getNthTable = (n: number) => loadedContent?.querySelector(`table:nth-child(${n})`);
     const getNthTableTextContent = (n: number) => getNthTable(n)?.firstElementChild?.textContent;
 
-    let date: WeatherHistoryType['date'];
-    let latitude: WeatherHistoryType['location']['latitude'];
-    let longitud: WeatherHistoryType['location']['longitud'];
-    let altitude: WeatherHistoryType['location']['altitude'];
-    const pressure: WeatherHistoryType['pressure'] = [];
-    let hour: WeatherHistoryType['pressure'][number]['hour'];
+    let date: WeatherHistory['date'];
+    let latitude: WeatherHistory['location']['latitude'];
+    let longitud: WeatherHistory['location']['longitud'];
+    let altitude: WeatherHistory['location']['altitude'];
+    const pressure: WeatherHistory['pressure'] = [];
+    let hour: WeatherHistory['pressure'][number]['hour'];
 
     const weatherTable = getNthTable(8);
     const weatherRows = Array.from(weatherTable?.firstElementChild?.children as HTMLCollection);
-    // eslint-disable-next-line max-len
-    const locationName = getNthTableTextContent(3)?.trim() as WeatherHistoryType['location']['name'];
+    const locationName = getNthTableTextContent(3)?.trim() as WeatherHistory['location']['name'];
     const measurementDate = getNthTableTextContent(4);
     const measurementLocationDetails = getNthTableTextContent(5);
 
@@ -92,4 +78,9 @@ export const getWeatherHistory = async () => {
 
   await browser.close();
   return data;
+};
+
+export const getWeatherHistory = async (_req: Request, res: Response, _next: NextFunction) => {
+  const data = await fetchWeatherHistory();
+  res.send(data);
 };

@@ -1,17 +1,14 @@
-/* eslint-disable no-console */
 import express from 'express';
 import cors from 'cors';
-import { getWeatherHistory } from './utility/weatherHistory';
+import weatherHistoryRoutes from './routes/weatherHistory';
 
 const app = express();
 
 app.use(cors());
 
-app.get('/weather_history', async (_req, res) => {
-  const data = await getWeatherHistory();
-  res.send(data);
-});
+app.use(weatherHistoryRoutes);
 
 app.listen(4000, () => {
+  // eslint-disable-next-line no-console
   console.log('Running on port 4000.');
 });
