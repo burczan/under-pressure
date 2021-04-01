@@ -3,7 +3,6 @@
   "version": "1.0.0",
   "description": "",
   "main": "./dist/js/server.js",
-  "type": "module",
   "scripts": {
     "build": "tsc",
     "start": "concurrently \"node_modules/typescript/bin/tsc -w\" \"nodemon dist/js/server.js\"",

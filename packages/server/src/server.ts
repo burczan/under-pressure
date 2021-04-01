@@ -1,6 +1,6 @@
 import express from 'express';
 import cors from 'cors';
-import weatherHistoryRoutes from './routes/weatherHistory.js';
+import weatherHistoryRoutes from './routes/weatherHistory';
 
 const app = express();
 

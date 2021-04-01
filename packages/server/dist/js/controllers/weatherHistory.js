@@ -1,6 +1,12 @@
-import puppeteer from 'puppeteer';
+"use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.getWeatherHistory = void 0;
+const puppeteer_1 = __importDefault(require("puppeteer"));
 const fetchWeatherHistory = async () => {
-    const browser = await puppeteer.launch();
+    const browser = await puppeteer_1.default.launch();
     const page = await browser.newPage();
     // eslint-disable-next-line max-len
     const chmi = 'https://www.chmi.cz/aktualni-situace/aktualni-stav-pocasi/ceska-republika/stanice/profesionalni-stanice/prehled-stanic/liberec?l=cz';
@@ -61,7 +67,8 @@ const fetchWeatherHistory = async () => {
     await browser.close();
     return data;
 };
-export const getWeatherHistory = async (_req, res, _next) => {
+const getWeatherHistory = async (_req, res, _next) => {
     const data = await fetchWeatherHistory();
     res.send(data);
 };
+exports.getWeatherHistory = getWeatherHistory;
