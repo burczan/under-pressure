@@ -2,10 +2,11 @@
   "name": "server",
   "version": "1.0.0",
   "description": "",
-  "main": "server.js",
+  "main": "./dist/js/server.js",
+  "type": "module",
   "scripts": {
     "build": "tsc",
-    "start": "concurrently \"tsc -w\" \"nodemon dist/js/server.js\"",
+    "start": "concurrently \"node_modules/typescript/bin/tsc -w\" \"nodemon dist/js/server.js\"",
     "mock-server": "json-server -p 4000 -w db.json",
     "eslint": "node_modules/eslint/bin/eslint.js --ext .ts src"
   },
